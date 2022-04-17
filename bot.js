@@ -48,7 +48,7 @@ function init() {
     if (!fs.existsSync('./fauceted')) {
         fs.writeFileSync('./fauceted', '');
     }
-    let faucted = fs.readFileSync('./fauceted');
+    let faucted = fs.readFileSync('./fauceted').toString();
 
     let map = {};
     faucted.split('\n').forEach(line => {

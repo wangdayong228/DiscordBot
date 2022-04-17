@@ -20,7 +20,7 @@ client.on('message', async (msg) => {
         msg.channel.send('test committed');
     }
     if (msg.content.startsWith(settings.prefix + 'faucet')) {
-        let addr = msg.content.substring((settings.prefix + 'faucet').length + 1).toLowerCase();
+        let addr = msg.content.substring((settings.prefix + 'faucet').length + 1).trim().toLowerCase();
         if (!ethers.utils.isAddress(addr)) {
             msg.channel.send('please input a valid address');
             return
@@ -31,13 +31,18 @@ client.on('message', async (msg) => {
             return
         }
 
-        msg.channel.send('address is valid, please wait a few seconds to receive CFX')
-        let txhash = await sendCFX(addr);
-        let link = `https://evm.confluxscan.net/tx/${txhash}`
-        msg.channel.send(`Done! please check from ${link}`);
+        try {
+            faucted[addr] = true
+            msg.channel.send('address is valid, please wait a few seconds to receive CFX')
+            let txhash = await sendCFX(addr);
+            let link = `https://evm.confluxscan.net/tx/${txhash}`
+            msg.channel.send(`Done! please check from ${link}`);
+            fs.appendFileSync('./fauceted', addr + '\n');
+        }
+        catch (e) {
+            faucted[addr] = false
+        }
 
-        faucted[addr] = true
-        fs.appendFileSync('./fauceted', addr + '\n');
     }
 });
 

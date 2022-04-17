@@ -26,6 +26,7 @@ client.on('message', async (msg) => {
             return
         }
 
+        console.log("fauceted",faucted,`faucted[${addr}]`,faucted[addr])
         if (faucted[addr]) {
             msg.channel.send('every address can only be fauceted once');
             return

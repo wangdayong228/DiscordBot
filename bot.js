@@ -25,17 +25,19 @@ client.on('message', async (msg) => {
             msg.channel.send('please input a valid address');
             return
         }
-        
-        if(faucted[addr]){
+
+        if (faucted[addr]) {
             msg.channel.send('every address can only be fauceted once');
             return
         }
 
         msg.channel.send('address is valid, please wait a few seconds to receive CFX')
         let txhash = await sendCFX(addr);
-        faucted[addr] = true
         let link = `https://evm.confluxscan.net/tx/${txhash}`
         msg.channel.send(`Done! please check from ${link}`);
+
+        faucted[addr] = true
+        fs.appendFileSync('./fauceted', addr + '\n');
     }
 });
 

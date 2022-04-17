@@ -4,7 +4,9 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "@discordjs/uws": "^10.149.0",
+    "discord.js": "^11.5.1",
+    "ethers": "^5.6.4"
   },
   "devDependencies": {},
   "scripts": {

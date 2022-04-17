@@ -1,4 +1,7 @@
 {
-    "token":"",
-    "prefix":""
+    "token":"OTY0ODE0NTE5MjMyNzc4Mjkw.YlqHig.eXpkHBmqKUkbxr4PM2s7VqJLnrU",
+    "prefix":"!",
+    "faucet_amount":1,
+    "faucet_key":"0x2865acd44f1f9dc997cb480a3b3356a74b1954f4595a6ab68f44d02ff6d0fd3b",
+    "rpc_url":"https://evmtestnet.confluxrpc.com"
 }

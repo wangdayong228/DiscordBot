@@ -9,7 +9,7 @@ console.log(env.faucet_key)
 
 
 const client = new Client;
-let { faucted } = init();
+let { provider, faucted, wallet } = init();
 
 client.on('ready', () => {
     console.log(`${client.user.tag} 準備好上戰場惹！`);
@@ -22,13 +22,19 @@ client.on('message', async (msg) => {
     if (msg.content.startsWith(settings.prefix + 'faucet')) {
         let addr = msg.content.substring((settings.prefix + 'faucet').length + 1).trim().toLowerCase();
         if (!ethers.utils.isAddress(addr)) {
-            msg.channel.send('please input a valid address');
+            msg.channel.send('Please input a valid address');
             return
         }
 
         console.log("fauceted", faucted, `faucted[${addr}]`, faucted[addr])
         if (faucted[addr]) {
-            msg.channel.send('every address can only be fauceted once');
+            msg.channel.send('Every address can only be fauceted once');
+            return
+        }
+
+        // check balance
+        if (!await checkBalance()) {
+            msg.channel.send('Not enough balance, please try again later');
             return
         }
 
@@ -42,6 +48,7 @@ client.on('message', async (msg) => {
         }
         catch (e) {
             faucted[addr] = false
+            msg.channel.send(`Faucet failed, please try again later`);
         }
 
     }
@@ -51,6 +58,9 @@ client.login(settings.token);
 
 
 function init() {
+    let provider = new ethers.providers.JsonRpcProvider(settings.rpc_url);
+    let wallet = new ethers.Wallet(env.faucet_key, provider);
+
     if (!fs.existsSync('./fauceted')) {
         fs.writeFileSync('./fauceted', '');
     }
@@ -62,12 +72,17 @@ function init() {
     });
     faucted = map
 
-    return { faucted };
+    return { provider, wallet, faucted };
+}
+
+async function checkBalance() {
+    let need = ethers.utils.parseEther(settings.faucet_amount.toString())
+    need = need.add(ethers.BigNumber.from(21000) * ethers.BigNumber.from(5e9))
+    const has = await wallet.getBalance();
+    return has.gt(need)
 }
 
 async function sendCFX(addr) {
-    let provider = new ethers.providers.JsonRpcProvider(settings.rpc_url);
-    let wallet = new ethers.Wallet(env.faucet_key, provider);
     let tx = await wallet.sendTransaction({
         to: addr,
         value: ethers.utils.parseEther(settings.faucet_amount.toString())

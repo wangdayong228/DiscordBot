@@ -5,7 +5,7 @@ const fs = require('fs');
 const settings = require('./settings.json');
 const env = process.env;
 dotenv.config()
-console.log(env.faucet_key)
+// console.log(env.faucet_key)
 
 
 const client = new Client;
